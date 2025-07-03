@@ -45,7 +45,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     if (user) {
       console.log('User already authenticated, redirecting to:', from);
       if (isFromLoginPage || from === '/') {
-        navigate('/', { replace: true });
+        navigate('/blogs', { replace: true });
       } else {
         navigate(from, { replace: true });
       }
@@ -79,8 +79,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         Toastify.success('Login successful!');
         
         // Redirect to dashboard or intended page, but avoid login page
-        if (isFromLoginPage || from === '/') {
-          navigate('/', { replace: true });
+        if (isFromLoginPage || from === '/blogs') {
+          navigate('/blogs', { replace: true });
         } else {
           navigate(from, { replace: true });
         }

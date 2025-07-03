@@ -22,28 +22,6 @@ const ForgotPassword = Loadable(lazy(() => import('../views/authentication/auth/
 
 const Router = [
   {
-    path: '/',
-    element: (
-      <ProtectedRoute>
-        <FullLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      // Sample page route
-      { path: '/sample-page', element: <SamplePage /> },
-      
-      // Dynamic CMS routes
-      { path: '/:tableName', exact: true, element: <ViewTable /> },
-      { path: '/:tableName/add', exact: true, element: <AddPage /> },
-      { path: '/:tableName/edit/:id', exact: true, element: <Form /> },
-      { path: '/:tableName/view/:id', exact: true, element: <Form /> },
-
-      // Default redirect for root path
-      { path: '', element: <Navigate to="/users" replace /> },
-      { path: '*', element: <Navigate to="/auth/404" /> },
-    ],
-  },
-  {
     path: '/auth',
     element: <BlankLayout />,
     children: [
@@ -72,6 +50,28 @@ const Router = [
         ) 
       },
       { path: '404', element: <Error /> },
+      { path: '*', element: <Navigate to="/auth/404" /> },
+    ],
+  },
+  {
+    path: '/',
+    element: (
+      <ProtectedRoute>
+        <FullLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      // Sample page route
+      { path: '/sample-page', element: <SamplePage /> },
+      
+      // Dynamic CMS routes
+      { path: '/:tableName', exact: true, element: <ViewTable /> },
+      { path: '/:tableName/add', exact: true, element: <AddPage /> },
+      { path: '/:tableName/edit/:id', exact: true, element: <Form /> },
+      { path: '/:tableName/view/:id', exact: true, element: <Form /> },
+
+      // Default redirect for root path
+      { path: '', element: <Navigate to="/users" replace /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },
