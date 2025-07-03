@@ -27,6 +27,12 @@ const Menuitems = [
     icon: IconAperture,
     href: '/pages',
   },
+   {
+    id: uniqueId(),
+    title: 'Authors',
+    icon: IconAperture,
+    href: '/author',
+  },
 ];
 
 export default Menuitems;
