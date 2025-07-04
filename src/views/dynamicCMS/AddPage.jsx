@@ -120,7 +120,7 @@ const AddPage = () => {
   const getBreadcrumbItems = () => {
     return [
       {
-        title: `{currentPath.charAt(0).toUpperCase() + currentPath.slice(1)}`,
+        title: `${currentPath.charAt(0).toUpperCase() + currentPath.slice(1)}`,
         to: `/${currentPath}`,
       },
       {

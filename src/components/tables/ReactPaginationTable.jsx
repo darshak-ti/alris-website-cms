@@ -65,7 +65,7 @@ const EnhancedTableToolbar = (props) => {
           fullWidth
         />
       </Box>
-      <IconFilter size="1.5rem" />
+      {/* <IconFilter size="1.5rem" />
       {buttonName && buttonName !== 'no button' && (
         <Box sx={{ flex: '1 0 auto' }}>
           <Button
@@ -77,7 +77,7 @@ const EnhancedTableToolbar = (props) => {
             {buttonName}
           </Button>
         </Box>
-      )}
+      )} */}
     </Toolbar>
   );
 };
