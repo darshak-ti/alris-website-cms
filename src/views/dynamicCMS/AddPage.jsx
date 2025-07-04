@@ -107,7 +107,7 @@ const AddPage = () => {
 
       Toastify.success('Page created successfully!');
       setTimeout(() => {
-        navigate('/pages');
+        navigate(`/${currentPath}`);
       }, 1500);
     } catch (error) {
       Toastify.error(`Failed to create page: ${error.message}`);
@@ -120,8 +120,8 @@ const AddPage = () => {
   const getBreadcrumbItems = () => {
     return [
       {
-        title: 'Pages',
-        to: '/pages',
+        title: `{currentPath.charAt(0).toUpperCase() + currentPath.slice(1)}`,
+        to: `/${currentPath}`,
       },
       {
         title: `Add New ${currentPath.charAt(0).toUpperCase() + currentPath.slice(1)}`,
@@ -139,8 +139,8 @@ const AddPage = () => {
     : '[]';
 
   return (
-    <PageContainer title="Add New Page">
-      <Breadcrumb title="Add New Page" items={getBreadcrumbItems()} />
+    <PageContainer title={`Add New ${currentPath.charAt(0).toUpperCase() + currentPath.slice(1)}`}>
+      <Breadcrumb title={`Add New ${currentPath.charAt(0).toUpperCase() + currentPath.slice(1)}`} items={getBreadcrumbItems()} />
 
       <Box sx={{ mt: 3 }}>
         <Card>
@@ -277,7 +277,7 @@ const AddPage = () => {
                 <Button
                   variant="outlined"
                   startIcon={<IconArrowLeft />}
-                  onClick={() => navigate('/pages')}
+                  onClick={() => navigate(`/${currentPath}`)}
                   disabled={saving}
                 >
                   Back
@@ -289,7 +289,7 @@ const AddPage = () => {
                   startIcon={saving ? <CircularProgress size={16} /> : <IconDeviceFloppy />}
                   disabled={saving}
                 >
-                  {saving ? 'Creating...' : 'Create Page'}
+                  {saving ? 'Creating...' : `Create ${currentPath.charAt(0).toUpperCase() + currentPath.slice(1)}`}
                 </Button>
               </Stack>
             </form>

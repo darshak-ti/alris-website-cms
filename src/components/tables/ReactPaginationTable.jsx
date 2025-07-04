@@ -17,13 +17,14 @@ import {
   InputAdornment,
   CircularProgress,
   Grid,
+  Select,
+  FormControl,
 } from '@mui/material';
 import { Stack } from '@mui/system';
 import DownloadCard from 'src/components/shared/DownloadCard';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import CustomSelect from 'src/components/forms/theme-elements/CustomSelect';
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -93,7 +94,7 @@ const ReactPaginationTable = ({
   onPageSizeChange,
   onSortChange,
   title,
-  pageSizeOptions = [10, 20, 30, 40, 50],
+  pageSizeOptions = [5, 10, 20, 30, 40, 50],
   buttonName,
   buttonLink,
   isForm = false,
@@ -107,8 +108,6 @@ const ReactPaginationTable = ({
   const [sortBy, setSortBy] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
   const tableContainerRef = React.useRef(null);
-  // eslint-disable-next-line no-unused-vars
-  const [scrollPosition, setScrollPosition] = React.useState({ x: 0, y: 0 });
 
   const handleSearch = (event) => {
     setSearch(event.target.value);
@@ -120,35 +119,6 @@ const ReactPaginationTable = ({
     setSortBy(`${currentPath}Id`);
     setSortOrder('asc');
   }, [currentPath]);
-
-  // Save scroll position before data changes
-  React.useEffect(() => {
-    const handleScroll = () => {
-      if (tableContainerRef.current) {
-        setScrollPosition({
-          x: tableContainerRef.current.scrollLeft,
-          y: tableContainerRef.current.scrollTop
-        });
-      }
-    };
-
-    const container = tableContainerRef.current;
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-      return () => container.removeEventListener('scroll', handleScroll);
-    }
-  }, []);
-
-  // Reset scroll position when data changes
-  React.useEffect(() => {
-    if (tableContainerRef.current) {
-      tableContainerRef.current.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth'
-      });
-    }
-  }, [data, pageIndex, pageSize]);
 
   const table = useReactTable({
     data,
@@ -206,25 +176,49 @@ const ReactPaginationTable = ({
             <TableContainer
               ref={tableContainerRef}
               sx={{
-                maxHeight: '350px',
+                maxHeight: '400px',
                 overflow: 'auto',
                 border: '1px solid #e0e0e0',
                 borderRadius: '10px',
                 width: '100%',
                 '&::-webkit-scrollbar': {
-                  width: '8px',
-                  height: '8px',
+                  width: '12px',
+                  height: '12px',
                 },
                 '&::-webkit-scrollbar-track': {
                   background: '#f1f1f1',
-                  borderRadius: '4px',
+                  borderRadius: '6px',
                 },
                 '&::-webkit-scrollbar-thumb': {
-                  background: '#888',
-                  borderRadius: '4px',
+                  background: '#c1c1c1',
+                  borderRadius: '6px',
                   '&:hover': {
-                    background: '#555',
+                    background: '#a8a8a8',
                   },
+                },
+                '&::-webkit-scrollbar-corner': {
+                  background: '#f1f1f1',
+                },
+                // Ensure scrollbar is always visible when content overflows
+                overflowY: 'auto',
+                overflowX: 'auto',
+                // Prevent layout shifts by ensuring consistent scrollbar space
+                scrollbarGutter: 'stable',
+                // For Firefox
+                scrollbarWidth: 'auto',
+                // Ensure the container maintains its size
+                // minHeight: '400px',
+                // Prevent content from causing horizontal scroll when not needed
+                // '& .MuiTable-root': {
+                //   minWidth: '100%',
+                //   width: '100%',
+                // },
+                // Ensure table cells don't cause horizontal overflow
+                '& .MuiTableCell-root': {
+                  maxWidth: '200px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
                 },
               }}
               className="table-container"
@@ -233,13 +227,24 @@ const ReactPaginationTable = ({
                 sx={{
                   whiteSpace: 'nowrap',
                   minWidth: '100%',
+                  tableLayout: 'fixed',
                 }}
+                stickyHeader
               >
                 <TableHead>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => (
-                        <TableCell key={header.id} align="center">
+                        <TableCell 
+                          key={header.id} 
+                          align="center"
+                          sx={{
+                            backgroundColor: 'background.paper',
+                            position: 'sticky',
+                            top: 0,
+                            zIndex: 1,
+                          }}
+                        >
                           <Typography
                             variant="h6"
                             mb={1}
@@ -308,18 +313,21 @@ const ReactPaginationTable = ({
                   </Typography>
                 </Stack>
 
-                <CustomSelect
-                  value={pageSize}
-                  onChange={(e) => {
-                    onPageSizeChange(Number(e.target.value));
-                  }}
-                >
-                  {pageSizeOptions.map((size) => (
-                    <MenuItem key={size} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </CustomSelect>
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <Select
+                    value={pageSize}
+                    onChange={(e) => {
+                      onPageSizeChange(Number(e.target.value));
+                    }}
+                    displayEmpty
+                  >
+                    {pageSizeOptions.map((size) => (
+                      <MenuItem key={size} value={size}>
+                        {size} per page
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
                 <IconButton size="small" onClick={() => onPageChange(0)} disabled={pageIndex === 0}>
                   <IconChevronsLeft />
@@ -355,3 +363,4 @@ const ReactPaginationTable = ({
 };
 
 export default ReactPaginationTable;
+

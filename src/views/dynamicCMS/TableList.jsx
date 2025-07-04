@@ -36,7 +36,7 @@ const TableList = () => {
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('id');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortOrder, setSortOrder] = useState('desc');
   const [total, setTotal] = useState(0);
   const [data, setData] = useState([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -57,7 +57,7 @@ const TableList = () => {
     setPageSize(10);
     setSearch('');
     setSortBy('id');
-    setSortOrder('asc');
+    setSortOrder('desc');
     setIsInitialLoad(true);
     setShouldFetch(true);
   }, [currentPath]);
@@ -218,8 +218,9 @@ const TableList = () => {
         .select('*', { count: 'exact' });
 
       if (search) {
+        // Only search in string columns, not integer/numeric columns
         const searchColumns = Object.keys(columnConfig).filter(key => 
-          columnConfig[key] === 'string' || columnConfig[key] === 'integer'
+          columnConfig[key] === 'string'
         );
         
         if (searchColumns.length > 0) {
@@ -496,7 +497,7 @@ const TableList = () => {
           onPageSizeChange={handlePageSizeChange}
           onSortChange={handleSortChange}
           title={`${capitalizeFirstLetter(currentPath)} List`}
-          pageSizeOptions={[10, 20, 30, 40, 50]}
+          pageSizeOptions={[5,10, 20, 30, 40, 50]}
           buttonName="no button"
           buttonLink={`/${currentPath}/add`}
           isForm={false}
