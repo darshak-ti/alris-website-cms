@@ -335,6 +335,11 @@ const TableList = () => {
     }
   };
 
+  // Check if delete functionality should be enabled for current page
+  const shouldShowDelete = () => {
+    return currentPath === 'blogs' || currentPath === 'author';
+  };
+
   const columns = React.useMemo(() => {
     const columns = [];
 
@@ -389,15 +394,17 @@ const TableList = () => {
                   <IconEdit size={18} />
                 </IconButton>
               </span>
-              <span title={`Delete ${capitalizeFirstLetter(currentPath)}`}>
-                <IconButton
-                  color="error"
-                  onClick={() => handleDeleteClick(rowData)}
-                  size="small"
-                >
-                  <IconTrash size={18} />
-                </IconButton>
-              </span>
+              {shouldShowDelete() && (
+                <span title={`Delete ${capitalizeFirstLetter(currentPath)}`}>
+                  <IconButton
+                    color="error"
+                    onClick={() => handleDeleteClick(rowData)}
+                    size="small"
+                  >
+                    <IconTrash size={18} />
+                  </IconButton>
+                </span>
+              )}
             </Stack>
           );
         },
@@ -513,18 +520,20 @@ const TableList = () => {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete this {currentPath}? This action cannot be undone.
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleDeleteConfirm} color="error">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {shouldShowDelete() && (
+        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+          <DialogTitle>Confirm Delete</DialogTitle>
+          <DialogContent>
+            Are you sure you want to delete this {currentPath}? This action cannot be undone.
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleDeleteConfirm} color="error">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </PageContainer>
   );
 };
