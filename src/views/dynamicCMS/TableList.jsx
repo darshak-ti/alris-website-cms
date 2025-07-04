@@ -474,16 +474,13 @@ const TableList = () => {
 
   return (
     <PageContainer title={`${capitalizeFirstLetter(currentPath)} List`}>
-      <Breadcrumb
-        title={`${capitalizeFirstLetter(currentPath)} List`}
-        items={BCrumb}
-      >
+      <Breadcrumb title={`${capitalizeFirstLetter(currentPath)} List`} items={BCrumb}>
         <Button
           variant="contained"
-        //   sx={{ minWidth: 160, float: 'right', background: '#0d4c56', color: '#fff', boxShadow: 'none', '&:hover': { background: '#09353c' } }}
+          //   sx={{ minWidth: 160, float: 'right', background: '#0d4c56', color: '#fff', boxShadow: 'none', '&:hover': { background: '#09353c' } }}
           onClick={() => navigate(`/${currentPath}/add`)}
         >
-          Add {capitalizeFirstLetter(currentPath.slice(0, -1))}
+          Add {capitalizeFirstLetter(currentPath)}
         </Button>
       </Breadcrumb>
       <div>

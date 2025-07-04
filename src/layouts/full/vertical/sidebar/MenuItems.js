@@ -29,7 +29,7 @@ const Menuitems = [
   },
    {
     id: uniqueId(),
-    title: 'Authors',
+    title: 'Author',
     icon: IconAperture,
     href: '/author',
   },
