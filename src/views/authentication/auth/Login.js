@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Box, Card, Stack, Typography } from '@mui/material';
 
@@ -9,6 +9,23 @@ import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthLogin from '../authForms/AuthLogin';
 
 const Login2 = () => {
+
+	useEffect(() => {
+    // Push a dummy state
+    window.history.pushState(null, '', window.location.href);
+
+    const handlePopState = (e) => {
+      // Push state again to prevent back
+      window.history.pushState(null, '', window.location.href);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
   return (
     <PageContainer title="Login" description="this is Login page">
       <Box

@@ -41,7 +41,7 @@ const Profile = () => {
         return;
       }
       Toastify.success('Logged out successfully!');
-      navigate('/auth/login');
+      navigate('/auth/login', { replace: true });
     } catch (err) {
       Toastify.error('An error occurred during logout.');
       console.error('Logout error:', err);
