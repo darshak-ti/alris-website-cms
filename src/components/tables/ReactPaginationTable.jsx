@@ -31,7 +31,6 @@ import {
   IconChevronsLeft,
   IconChevronsRight,
   IconSearch,
-  IconFilter,
 } from '@tabler/icons';
 
 const EnhancedTableToolbar = (props) => {

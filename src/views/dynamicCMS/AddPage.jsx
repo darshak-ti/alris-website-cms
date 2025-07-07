@@ -105,12 +105,12 @@ const AddPage = () => {
         throw error;
       }
 
-      Toastify.success('Page created successfully!');
+      Toastify.success(`${currentPath} created successfully!`);
       setTimeout(() => {
         navigate(`/${currentPath}`);
       }, 1500);
     } catch (error) {
-      Toastify.error(`Failed to create page: ${error.message}`);
+      Toastify.error(`Failed to create ${currentPath}: ${error.message}`);
       console.error('Submit error:', error);
     } finally {
       setSaving(false);

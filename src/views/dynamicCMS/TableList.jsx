@@ -22,6 +22,7 @@ import { debounce } from 'lodash';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { capitalizeFirstLetter } from './../../utils/stringUtils';
 import { supabase } from '../../utils/supabase';
+import Toastify from '../../components/Toastify/Toastify';
 
 const columnHelper = createColumnHelper();
 
@@ -159,7 +160,7 @@ const TableList = () => {
     try {
       let query = supabase
         .from(currentPath)
-		.select('*', { count: 'exact' });
+			.select('*', { count: 'exact' });
 		
 
       if (search) {
@@ -203,9 +204,17 @@ const TableList = () => {
   }, [fetchData, shouldFetch]);
 
   const handleAdd = () => {
+    // Create static column config for the current table
+    const staticColumnConfig = {
+      title: 'string',
+      slug: 'string',
+      content: 'json',
+      synonyms_slug: 'array'
+    };
+
     navigate(`/${currentPath}/add`, { 
       state: { 
-        data: {},
+        data: { column_config: staticColumnConfig },
         mode: 'add'
       } 
     });
@@ -213,10 +222,20 @@ const TableList = () => {
 
   const handleView = (rowData) => {
     const dynamicId = rowData.id || rowData[`${currentPath}Id`];
+    
+    // Create static column config for the current table
+    const staticColumnConfig = {
+      title: 'string',
+      slug: 'string',
+      content: 'json',
+      synonyms_slug: 'array'
+    };
+
     navigate(`/${currentPath}/view/${dynamicId}`, {
       state: {
         data: {
           records: rowData,
+          column_config: staticColumnConfig,
         },
         mode: 'view'
       },
@@ -225,10 +244,20 @@ const TableList = () => {
 
   const handleEdit = (rowData) => {
     const dynamicId = rowData.id || rowData[`${currentPath}Id`];
+    
+    // Create static column config for the current table
+    const staticColumnConfig = {
+      title: 'string',
+      slug: 'string',
+      content: 'json',
+      synonyms_slug: 'array'
+    };
+
     navigate(`/${currentPath}/edit/${dynamicId}`, {
       state: {
         data: {
           records: rowData,
+          column_config: staticColumnConfig,
         },
         mode: 'edit'
       },
@@ -252,13 +281,15 @@ const TableList = () => {
 
       if (error) {
         console.error('Delete error:', error);
-        // You can add toast notification here
+        Toastify.error(`Failed to delete ${currentPath}: ${error.message}`);
       } else {
         // Refresh the data
         setShouldFetch(true);
+        Toastify.success(`${capitalizeFirstLetter(currentPath)} deleted successfully!`);
       }
     } catch (error) {
       console.error('Failed to delete item:', error);
+      Toastify.error(`Failed to delete ${currentPath}: ${error.message}`);
     } finally {
       setDeleteDialogOpen(false);
       setItemToDelete(null);

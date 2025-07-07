@@ -51,6 +51,7 @@ const Form = () => {
   // Get data from location state
   const { data } = location.state || {};
 
+	console.log(data);
   useEffect(() => {
     if (data?.column_config) {
       setColumnConfig(data.column_config);
