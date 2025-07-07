@@ -159,7 +159,8 @@ const TableList = () => {
     try {
       let query = supabase
         .from(currentPath)
-        .select('*', { count: 'exact' });
+		.select('*', { count: 'exact' });
+		
 
       if (search) {
         // Search in title and slug fields

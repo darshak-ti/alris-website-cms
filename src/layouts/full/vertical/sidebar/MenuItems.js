@@ -1,4 +1,4 @@
-import { IconAperture, IconClipboardText, IconArticle, IconUsers  } from '@tabler/icons';
+import {  IconClipboardText, IconArticle, IconUsers  } from '@tabler/icons';
 
 import { uniqueId } from 'lodash';
 
