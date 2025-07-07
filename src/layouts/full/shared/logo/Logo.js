@@ -14,7 +14,7 @@ const Logo = () => {
   if (customizer.activeDir === 'ltr') {
     return (
       <LinkStyled
-        to="/"
+        
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -38,7 +38,6 @@ const Logo = () => {
   }
   return (
     <LinkStyled
-      to="/"
       style={{
         display: 'flex',
         alignItems: 'center',

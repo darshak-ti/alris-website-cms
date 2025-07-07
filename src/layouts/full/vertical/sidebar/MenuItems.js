@@ -1,6 +1,4 @@
-import {
-  IconAperture,
-} from '@tabler/icons';
+import { IconAperture, IconClipboardText, IconArticle, IconUsers  } from '@tabler/icons';
 
 import { uniqueId } from 'lodash';
 
@@ -12,25 +10,25 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Blog',
-    icon: IconAperture,
+    icon: IconArticle,
     href: '/blogs',
   },
-  {
-    id: uniqueId(),
-    title: 'Categories',
-    icon: IconAperture,
-    href: '/categories',
-  },
+  //   {
+  //     id: uniqueId(),
+  //     title: 'Categories',
+  //     icon: IconAperture,
+  //     href: '/categories',
+  //   },
   {
     id: uniqueId(),
     title: 'Pages',
-    icon: IconAperture,
+    icon: IconClipboardText,
     href: '/pages',
   },
-   {
+  {
     id: uniqueId(),
     title: 'Author',
-    icon: IconAperture,
+    icon: IconUsers,
     href: '/author',
   },
 ];

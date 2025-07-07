@@ -22,7 +22,6 @@ import { debounce } from 'lodash';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { capitalizeFirstLetter } from './../../utils/stringUtils';
 import { supabase } from '../../utils/supabase';
-import { generateColumnConfig } from '../../utils/dataTypeDetector';
 
 const columnHelper = createColumnHelper();
 
@@ -45,7 +44,6 @@ const TableList = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogData, setDialogData] = useState(null);
   const [dialogTitle, setDialogTitle] = useState('');
-  const [columnConfig, setColumnConfig] = useState({});
   
   // Delete confirmation modal state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -68,25 +66,7 @@ const TableList = () => {
     },
   ];
 
-  const ignoreData = ['id', 'created_at', 'updated_at'];
-
-  const shouldIgnoreField = (fieldName) => {
-    return ignoreData.some((ignoreField) => fieldName === ignoreField || fieldName.startsWith('_'));
-  };
-
-  const formatColumnHeader = (key) => {
-    const words = key.split('_');
-    return words
-      .map((word) => {
-        return word
-          .replace(/([A-Z])/g, ' $1')
-          .replace(/^./, (str) => str.toUpperCase())
-          .trim();
-      })
-      .join(' ');
-  };
-
-  const renderCellValue = (info, dataType) => {
+  const renderCellValue = (info, fieldName) => {
     const value = info?.getValue();
 
     const makeReadable = (text) => {
@@ -131,78 +111,42 @@ const TableList = () => {
         .join(' | ');
     };
 
-    switch (dataType) {
-      case 'boolean':
+    // Handle JSON/Array fields (content and synonyms_slug)
+    if (fieldName === 'content' || fieldName === 'synonyms_slug') {
+      if (typeof value === 'object' && value !== null) {
+        if (Object.keys(value).length === 0) return '{}';
         return (
-          <Chip label={value ? 'Yes' : 'No'} color={value ? 'success' : 'error'} size="small" />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              variant="body2"
+              component="div"
+              sx={{
+                maxWidth: '200px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {Array.isArray(value) 
+                ? `${value.length} items`
+                : formatNestedObject(value)
+              }
+            </Typography>
+            <Chip
+              label="See more"
+              size="small"
+              color="primary"
+              onClick={() => handleOpenDialog(value, `${fieldName === 'content' ? 'Content' : 'Synonyms Slug'} Data`)}
+              sx={{ cursor: 'pointer' }}
+            />
+          </Box>
         );
-      case 'json':
-        if (typeof value === 'object' && value !== null) {
-          if (Object.keys(value).length === 0) return '{}';
-          return (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography
-                variant="body2"
-                component="div"
-                sx={{
-                  maxWidth: '200px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {formatNestedObject(value)}
-              </Typography>
-              <Chip
-                label="See more"
-                size="small"
-                color="primary"
-                onClick={() => handleOpenDialog(value, 'JSON Data')}
-                sx={{ cursor: 'pointer' }}
-              />
-            </Box>
-          );
-        }
-        return value || '-';
-      case 'array':
-        if (!Array.isArray(value) || value.length === 0) return '-';
-        {
-          const firstItem = value[0];
-          return (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography
-                variant="body2"
-                component="div"
-                sx={{
-                  maxWidth: '200px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {typeof firstItem !== 'object'
-                  ? `${firstItem}${value.length > 1 ? ` and ${value.length - 1} more` : ''}`
-                  : `${value.length} items`}
-              </Typography>
-              {value.length > 1 && (
-                <Chip
-                  label="See more"
-                  size="small"
-                  color="primary"
-                  onClick={() => handleOpenDialog(value, 'Array Data')}
-                  sx={{ cursor: 'pointer' }}
-                />
-              )}
-            </Box>
-          );
-        }
-      case 'datetime':
-        return value ? new Date(value).toLocaleString() : '-';
-      case 'decimal':
-        return typeof value === 'number' ? value.toFixed(2) : '-';
-      default:
-        return value || '-';
+      }
+      return value || '-';
     }
+
+    // Handle other fields
+    return value || '-';
   };
 
   const fetchData = useCallback(async () => {
@@ -218,17 +162,8 @@ const TableList = () => {
         .select('*', { count: 'exact' });
 
       if (search) {
-        // Only search in string columns, not integer/numeric columns
-        const searchColumns = Object.keys(columnConfig).filter(key => 
-          columnConfig[key] === 'string'
-        );
-        
-        if (searchColumns.length > 0) {
-          const searchFilters = searchColumns.map(column => 
-            `${column}.ilike.%${search}%`
-          );
-          query = query.or(searchFilters.join(','));
-        }
+        // Search in title and slug fields
+        query = query.or(`title.ilike.%${search}%,slug.ilike.%${search}%`);
       }
 
       if (sortBy) {
@@ -248,11 +183,6 @@ const TableList = () => {
       } else {
         setData(result || []);
         setTotal(count || 0);
-        
-        if (result && result.length > 0 && Object.keys(columnConfig).length === 0) {
-          const config = generateColumnConfig(result);
-          setColumnConfig(config);
-        }
       }
     } catch (error) {
       setData([]);
@@ -263,7 +193,7 @@ const TableList = () => {
       setIsInitialLoad(false);
       setShouldFetch(false);
     }
-  }, [pageIndex, pageSize, search, sortBy, sortOrder, currentPath, shouldFetch, columnConfig]);
+  }, [pageIndex, pageSize, search, sortBy, sortOrder, currentPath, shouldFetch]);
 
   useEffect(() => {
     if (shouldFetch) {
@@ -274,7 +204,7 @@ const TableList = () => {
   const handleAdd = () => {
     navigate(`/${currentPath}/add`, { 
       state: { 
-        data: { column_config: columnConfig },
+        data: {},
         mode: 'add'
       } 
     });
@@ -286,7 +216,6 @@ const TableList = () => {
       state: {
         data: {
           records: rowData,
-          column_config: columnConfig,
         },
         mode: 'view'
       },
@@ -299,7 +228,6 @@ const TableList = () => {
       state: {
         data: {
           records: rowData,
-          column_config: columnConfig,
         },
         mode: 'edit'
       },
@@ -342,9 +270,7 @@ const TableList = () => {
   };
 
   const columns = React.useMemo(() => {
-    const columns = [];
-
-    columns.push(
+    return [
       columnHelper.accessor('row.index', {
         id: 'srNo',
         header: 'Sr No.',
@@ -354,21 +280,26 @@ const TableList = () => {
           return pageIndex * pageSize + rowIndex + 1;
         },
       }),
-    );
-
-    Object.entries(columnConfig).forEach(([key, dataType]) => {
-      if (shouldIgnoreField(key)) return;
-
-      columns.push(
-        columnHelper.accessor(key, {
-          header: () => formatColumnHeader(key),
-          cell: (info) => renderCellValue(info, dataType),
-          enableSorting: false,
-        }),
-      );
-    });
-
-    columns.push(
+      columnHelper.accessor('title', {
+        header: 'Title',
+        cell: (info) => renderCellValue(info, 'title'),
+        enableSorting: true,
+      }),
+      columnHelper.accessor('slug', {
+        header: 'Slug',
+        cell: (info) => renderCellValue(info, 'slug'),
+        enableSorting: true,
+      }),
+      columnHelper.accessor('content', {
+        header: 'Content',
+        cell: (info) => renderCellValue(info, 'content'),
+        enableSorting: false,
+      }),
+      columnHelper.accessor('synonyms_slug', {
+        header: 'Synonyms Slug',
+        cell: (info) => renderCellValue(info, 'synonyms_slug'),
+        enableSorting: false,
+      }),
       columnHelper.accessor('id', {
         id: 'actions',
         header: 'Actions',
@@ -410,10 +341,8 @@ const TableList = () => {
           );
         },
       }),
-    );
-
-    return columns;
-  }, [navigate, columnConfig, currentPath, pageIndex, pageSize]);
+    ];
+  }, [navigate, currentPath, pageIndex, pageSize]);
 
   const debouncedSearch = useCallback(
     debounce((value) => {
