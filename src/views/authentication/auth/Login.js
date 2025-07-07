@@ -12,7 +12,7 @@ const Login2 = () => {
 
 	useEffect(() => {
     // Push a dummy state
-    window.history.pushState(null, '', window.location.href);
+     window.history.pushState(null, '', window.location.href);
 
     const handlePopState = (e) => {
       // Push state again to prevent back
