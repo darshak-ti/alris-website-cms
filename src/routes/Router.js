@@ -71,7 +71,7 @@ const Router = [
       { path: '/:tableName/view/:id', exact: true, element: <Form /> },
 
       // Default redirect for root path
-      { path: '', element: <Navigate to="/users" replace /> },
+      { path: '', element: <Navigate to="/blogs" replace /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },

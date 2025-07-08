@@ -1,4 +1,4 @@
-import {  IconClipboardText, IconArticle, IconUsers  } from '@tabler/icons';
+import {  IconMap,IconClipboardText, IconArticle, IconUsers  } from '@tabler/icons';
 
 import { uniqueId } from 'lodash';
 
@@ -13,12 +13,12 @@ const Menuitems = [
     icon: IconArticle,
     href: '/blogs',
   },
-  //   {
-  //     id: uniqueId(),
-  //     title: 'Categories',
-  //     icon: IconAperture,
-  //     href: '/categories',
-  //   },
+  {
+    id: uniqueId(),
+    title: 'Sitemaps',
+    icon: IconMap,
+    href: '/sitemaps',
+  },
   {
     id: uniqueId(),
     title: 'Pages',

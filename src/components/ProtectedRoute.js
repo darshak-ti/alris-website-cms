@@ -5,7 +5,7 @@ import Spinner from '../views/spinner/Spinner';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  const location = useLocation();
+   const location = useLocation();
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -17,6 +17,7 @@ const ProtectedRoute = ({ children }) => {
     // Redirect to login page with the return url
       return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
+
 
   // If user is authenticated, render the protected content
   return children;
