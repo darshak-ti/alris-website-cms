@@ -12,6 +12,44 @@ export const useAuth = () => {
   return context;
 };
 
+// Custom hook for managing auth page titles and history
+export const useAuthPageTitle = (pageTitle) => {
+  useEffect(() => {
+    const fullTitle = `${pageTitle} - Alris CMS`;
+    
+    // Set the page title immediately
+    document.title = fullTitle;
+    
+    // Clear browser history and replace current entry
+    if (window.history.length > 1) {
+      // Replace the current history entry to clear previous page titles
+      window.history.replaceState(null, fullTitle, window.location.href);
+    } else {
+      // Push a new state if this is the first entry
+      window.history.pushState(null, fullTitle, window.location.href);
+    }
+
+    const handlePopState = () => {
+      // Prevent back navigation and ensure auth page title stays
+      window.history.pushState(null, fullTitle, window.location.href);
+      document.title = fullTitle;
+    };
+
+    const handleBeforeUnload = () => {
+      // Ensure title is set correctly when page is about to unload
+      document.title = fullTitle;
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [pageTitle]);
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);

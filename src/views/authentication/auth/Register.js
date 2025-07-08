@@ -5,8 +5,12 @@ import { Grid, Box, Card, Stack, Typography } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthRegister from '../authForms/AuthRegister';
+import { useAuthPageTitle } from '../../../utils/authContext';
 
 const Register = () => {
+  // Use the custom hook for managing page title and history
+  useAuthPageTitle('Register');
+
   return (
     <PageContainer title="Register" description="this is Register page">
       <Box

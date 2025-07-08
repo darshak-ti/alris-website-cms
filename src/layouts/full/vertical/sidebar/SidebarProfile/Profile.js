@@ -1,14 +1,33 @@
-import React from 'react';
 import { Box, Avatar, Typography, IconButton, Tooltip, useMediaQuery } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import img1 from 'src/assets/images/profile/user-1.jpg';
 import { IconPower } from '@tabler/icons';
-import {Link} from "react-router-dom";
+import { useAuth } from '../../../../../utils/authContext';
+import Toastify from '../../../../../components/Toastify/Toastify';
 
 export const Profile = () => {
   const customizer = useSelector((state) => state.customizer);
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  const hideMenu = lgUp ? customizer.isCollapse && !customizer.isSidebarHover : '';
+  const hideMenu = lgUp ? customizer.isCollapse && !customizer.isCollapse : '';
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await logout();
+      if (error) {
+        Toastify.error('Logout failed. Please try again.');
+        return;
+      }
+      Toastify.success('Logged out successfully!');
+      navigate('/auth/login', { replace: true });
+    } catch (err) {
+      Toastify.error('An error occurred during logout.');
+      console.error('Logout error:', err);
+    }
+  };
+
   return (
     <Box
       display={'flex'}
@@ -26,7 +45,7 @@ export const Profile = () => {
           </Box>
           <Box sx={{ ml: 'auto' }}>
             <Tooltip title="Logout" placement="top">
-              <IconButton color="primary" component={Link} to="/auth/login" aria-label="logout" size="small">
+              <IconButton color="primary" onClick={handleLogout} aria-label="logout" size="small">
                 <IconPower size="20" />
               </IconButton>
             </Tooltip>

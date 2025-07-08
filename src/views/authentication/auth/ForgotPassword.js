@@ -4,8 +4,12 @@ import { Grid, Box, Card, Typography } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthForgotPassword from '../authForms/AuthForgotPassword';
+import { useAuthPageTitle } from '../../../utils/authContext';
 
 const ForgotPassword = () => {
+  // Use the custom hook for managing page title and history
+  useAuthPageTitle('Forgot Password');
+
   return (
     <PageContainer title="Forgot Password" description="this is Forgot Password page">
       <Box

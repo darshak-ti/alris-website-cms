@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Box, Card, Stack, Typography } from '@mui/material';
 
@@ -7,24 +7,11 @@ import { Grid, Box, Card, Stack, Typography } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthLogin from '../authForms/AuthLogin';
+import { useAuthPageTitle } from '../../../utils/authContext';
 
 const Login2 = () => {
-
-	useEffect(() => {
-    // Push a dummy state
-     window.history.pushState(null, '', window.location.href);
-
-    const handlePopState = (e) => {
-      // Push state again to prevent back
-      window.history.pushState(null, '', window.location.href);
-    };
-
-    window.addEventListener('popstate', handlePopState);
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, []);
+  // Use the custom hook for managing page title and history
+  useAuthPageTitle('Login');
 
   return (
     <PageContainer title="Login" description="this is Login page">
